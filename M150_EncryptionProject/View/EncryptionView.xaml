@@ -6,12 +6,12 @@
              xmlns:local="clr-namespace:M150_EncryptionProject.View"
              mc:Ignorable="d" Width="298" Height="355">
     <Grid Margin="0,0,0,-6">
-        <Button x:Name="Btn_Decrypt" Content="Entschlüsseln" Command="{Binding EncryptCommand}"  HorizontalAlignment="Left" Margin="36,265,0,0"  VerticalAlignment="Top" Click="Btn_decrypt_Click"/>
-        <Button x:Name="Btn_Encrypt" Content="Verschlüsseln" Command="{Binding DecryptionCommand}" HorizontalAlignment="Left" Margin="180,265,0,0"  VerticalAlignment="Top" Click="Btn_decrypt_Click" RenderTransformOrigin="0.945,0.72"/>
-        <TextBox x:Name="Txb_Path" HorizontalAlignment="Left" Margin="36,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
-        <Button x:Name="Btn_path" Content="Suchen" Command="{Binding OpenFileDialogCommand}" HorizontalAlignment="Left" Margin="180,69,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.571,-3.185"/>
-        <TextBox x:Name="Txb_Key" HorizontalAlignment="Left" Margin="36,155,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="Lbl_Key" Content="Schlüssel" HorizontalAlignment="Left" Margin="36,129,0,0" VerticalAlignment="Top"/>
         <Label x:Name="Lbl_Path" Content="Dateipfad" HorizontalAlignment="Left" Margin="36,45,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Txb_Path" Text="{Binding FilePath, Mode=OneWay}" HorizontalAlignment="Left" Margin="36,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+        <Button x:Name="Btn_path" Content="Suchen" Command="{Binding OpenFileDialogCommand}" HorizontalAlignment="Left" Margin="180,69,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.571,-3.185"/>
+        <Label x:Name="Lbl_Key" Content="Schlüssel" HorizontalAlignment="Left" Margin="36,129,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Txb_Key" Text="{Binding Key}" HorizontalAlignment="Left" Margin="36,155,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="Btn_Decrypt" Content="Entschlüsseln" Command="{Binding EncryptCommand}"  HorizontalAlignment="Left" Margin="36,265,0,0"  VerticalAlignment="Top" Click="Btn_decrypt_Click"/>
+        <Button x:Name="Btn_Encrypt" Content="Verschlüsseln" Command="{Binding DecryptCommand}" HorizontalAlignment="Left" Margin="180,265,0,0"  VerticalAlignment="Top" Click="Btn_decrypt_Click" RenderTransformOrigin="0.945,0.72"/>
     </Grid>
 </Window>

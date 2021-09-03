@@ -36,9 +36,11 @@ namespace M150_EncryptionProject.ViewModel
                 {
                     _fileInfo = value;
                     OnPropertyChanged();
+                    OnPropertyChanged("FilePath");
                 }
             }
         }
+        public string FilePath => FileInfo?.FullName != null ? FileInfo.FullName : "";
         public string Key
         {
             get => _key;
@@ -70,21 +72,22 @@ namespace M150_EncryptionProject.ViewModel
 
         private void Encrypt()
         {
-            if (!File.Exists(FileInfo.FullName))
+            if (FilePath.Equals("") || !File.Exists(FilePath))
             {
-                MessageBox.Show("Could not read contents of file \"" + FileInfo.FullName + "\".\nFile does not exist.", "Could not read contents of file.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Could not read contents of file \"" + FilePath + "\".\nFile does not exist.", "Could not read contents of file.", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
             
             string fileContent = FileInfo.OpenText().ReadToEnd();
 
             if(fileContent == null)
             {
-                MessageBox.Show("Could not read contents of file \"" + FileInfo.FullName + "\".", "Could not read contents of file.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Could not read contents of file \"" + FilePath + "\".", "Could not read contents of file.", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             if(fileContent == "")
             {
-                MessageBox.Show("File \"" + FileInfo.FullName + "\" is empty.\nEncryption stopped.", "File is empty.", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("File \"" + FilePath + "\" is empty.\nEncryption stopped.", "File is empty.", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
