@@ -13,5 +13,10 @@ namespace M150_EncryptionProject.View
             DataContext = new EncryptionViewModel(this);
             InitializeComponent();
         }
+
+        private void Btn_decrypt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
