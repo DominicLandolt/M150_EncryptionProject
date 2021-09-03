@@ -25,7 +25,7 @@ namespace M150_EncryptionProject.ViewModel
         }
 
         public ICommand OpenFileDialogCommand => _openFileDialogCommand ??= new DelegateCommand(OpenFileDialog);
-        public ICommand EncpytCommand => _encryptCommand ??= new DelegateCommand(Encrypt);
+        public ICommand EncryptCommand => _encryptCommand ??= new DelegateCommand(Encrypt);
         public ICommand DecryptCommand => _decryptCommand ??= new DelegateCommand(Decrypt);
         public FileInfo FileInfo
         {
