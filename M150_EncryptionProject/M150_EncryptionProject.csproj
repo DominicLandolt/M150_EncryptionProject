@@ -10,4 +10,8 @@
     <Folder Include="Model\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+  </ItemGroup>
+
 </Project>

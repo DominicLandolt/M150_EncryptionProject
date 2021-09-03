@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Input;
+using Prism.Commands;
 
 namespace M150_EncryptionProject.ViewModel
 {
@@ -13,6 +15,18 @@ namespace M150_EncryptionProject.ViewModel
         private FileInfo _fileInfo;
         private string _key = "";
 
+        private DelegateCommand _openFileDialogCommand;
+        private DelegateCommand _encryptCommand;
+        private DelegateCommand _decryptCommand;
+
+        public EncryptionViewModel(EncryptionView view)
+        {
+            _view = view;
+        }
+
+        public ICommand OpenFileDialogCommand => _openFileDialogCommand ??= new DelegateCommand(OpenFileDialog);
+        public ICommand EncpytCommand => _encryptCommand ??= new DelegateCommand(Encrypt);
+        public ICommand DecryptCommand => _decryptCommand ??= new DelegateCommand(Decrypt);
         public FileInfo FileInfo
         {
             get => _fileInfo;
@@ -36,11 +50,6 @@ namespace M150_EncryptionProject.ViewModel
                     OnPropertyChanged();
                 }
             }
-        }
-
-        public EncryptionViewModel(EncryptionView view)
-        {
-            _view = view;
         }
 
         private void OpenFileDialog()
@@ -90,6 +99,20 @@ namespace M150_EncryptionProject.ViewModel
 
         private void Decrypt()
         {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "All files (*.*)|*.*";
+            if (saveFileDialog.ShowDialog() != true)
+            {
+                return;
+            }
+            FileInfo fileInfo = new FileInfo(saveFileDialog.FileName);
+
+            if (Key.Equals(""))
+            {
+                MessageBox.Show("Missing parameter \"key\". Please provide a key to decrypt files.", "Missing parameter \"key\".", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             //TODO
         }
 
