@@ -97,18 +97,46 @@ namespace M150_EncryptionProject.ViewModel
                 MessageBox.Show("Generated new key \"" + Key + "\" as no key was provided.", "Generated new key.", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
-            //TODO Encryption magic
-        }
 
-        private void Decrypt()
-        {
+
+            //TODO Encryption magic
+
+
+
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = FileInfo.Name;
+            saveFileDialog.DefaultExt = FileInfo.Extension;
+            saveFileDialog.InitialDirectory = FileInfo.DirectoryName;
             saveFileDialog.Filter = "All files (*.*)|*.*";
             if (saveFileDialog.ShowDialog() != true)
             {
                 return;
             }
-            FileInfo fileInfo = new FileInfo(saveFileDialog.FileName);
+            FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
+
+            //TODO save
+        }
+
+        private void Decrypt()
+        {
+            if (FilePath.Equals("") || !File.Exists(FilePath))
+            {
+                MessageBox.Show("Could not read contents of file \"" + FilePath + "\".\nFile does not exist.", "Could not read contents of file.", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            string fileContent = FileInfo.OpenText().ReadToEnd();
+
+            if (fileContent == null)
+            {
+                MessageBox.Show("Could not read contents of file \"" + FilePath + "\".", "Could not read contents of file.", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (fileContent == "")
+            {
+                MessageBox.Show("File \"" + FilePath + "\" is empty.\nDecryption stopped.", "File is empty.", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
 
             if (Key.Equals(""))
             {
@@ -116,7 +144,24 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
 
-            //TODO
+
+
+            //TODO Decryption magic
+
+
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = FileInfo.Name;
+            saveFileDialog.DefaultExt = FileInfo.Extension;
+            saveFileDialog.InitialDirectory = FileInfo.DirectoryName;
+            saveFileDialog.Filter = "All files (*.*)|*.*";
+            if (saveFileDialog.ShowDialog() != true)
+            {
+                return;
+            }
+            FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
+
+            //TODO save
         }
 
         private string GenerateKey()
