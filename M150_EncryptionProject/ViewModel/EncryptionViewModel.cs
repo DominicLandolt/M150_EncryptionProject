@@ -6,6 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Prism.Commands;
+using System.Security.Cryptography;
+using System.Text;
+using System;
 
 namespace M150_EncryptionProject.ViewModel
 {
@@ -101,7 +104,35 @@ namespace M150_EncryptionProject.ViewModel
 
             //TODO Encryption magic
 
+            bool useHashing = true;
+            byte[] keyArray;
+            byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(fileContent);
+            byte[] resultArray;
 
+            // Get the key from Web.Config file
+            //key = ConfigurationManager.AppSettings.Get("EncKey");
+            
+            if (useHashing)
+            {
+                MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+                keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(Key));
+                hashmd5.Clear();
+            }
+            else
+            {
+                keyArray = UTF8Encoding.UTF8.GetBytes(Key);
+            }
+
+            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+            tdes.Key = keyArray;
+            tdes.Mode = CipherMode.ECB;
+            tdes.Padding = PaddingMode.PKCS7;
+
+            ICryptoTransform cTransform = tdes.CreateEncryptor();
+
+            resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+
+            tdes.Clear();
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.FileName = FileInfo.Name;
@@ -114,7 +145,7 @@ namespace M150_EncryptionProject.ViewModel
             }
             FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
 
-            //TODO save
+            File.WriteAllText(saveFileInfo.FullName, string.Join("", resultArray));
         }
 
         private void Decrypt()
