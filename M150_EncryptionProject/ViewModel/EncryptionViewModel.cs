@@ -100,28 +100,13 @@ namespace M150_EncryptionProject.ViewModel
                 MessageBox.Show("Generated new key \"" + Key + "\" as no key was provided.", "Generated new key.", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
-
-
-            //TODO Encryption magic
-
-            bool useHashing = true;
             byte[] keyArray;
             byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(fileContent);
             byte[] resultArray;
-
-            // Get the key from Web.Config file
-            //key = ConfigurationManager.AppSettings.Get("EncKey");
             
-            if (useHashing)
-            {
-                MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-                keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(Key));
-                hashmd5.Clear();
-            }
-            else
-            {
-                keyArray = UTF8Encoding.UTF8.GetBytes(Key);
-            }
+            MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+            keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(Key));
+            hashmd5.Clear();
 
             TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
             tdes.Key = keyArray;
@@ -178,6 +163,29 @@ namespace M150_EncryptionProject.ViewModel
 
 
             //TODO Decryption magic
+            byte[] keyArray;
+            byte[] toEncryptArray = Convert.FromBase64String(fileContent);
+            byte[] resultArray;
+
+            MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+            keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(Key));
+            hashmd5.Clear();
+
+            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+            tdes.Key = keyArray;
+            tdes.Mode = CipherMode.ECB;
+            tdes.Padding = PaddingMode.PKCS7;
+
+
+            ICryptoTransform cTransform = tdes.CreateDecryptor();
+            resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+
+            tdes.Clear();
+
+            UTF8Encoding.UTF8.GetString(resultArray);
+
+
+
 
 
 
@@ -192,7 +200,7 @@ namespace M150_EncryptionProject.ViewModel
             }
             FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
 
-            //TODO save
+            File.WriteAllText(saveFileInfo.FullName, string.Join("", resultArray));
         }
 
         private string GenerateKey()
