@@ -101,17 +101,19 @@ namespace M150_EncryptionProject.ViewModel
             }
 
             byte[] keyArray;
-            byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(fileContent);
+            byte[] toEncryptArray = Encoding.UTF8.GetBytes(fileContent);
             byte[] resultArray;
             
             MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-            keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(Key));
+            keyArray = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(Key));
             hashmd5.Clear();
 
-            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
-            tdes.Key = keyArray;
-            tdes.Mode = CipherMode.ECB;
-            tdes.Padding = PaddingMode.PKCS7;
+            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider
+            {
+                Key = keyArray,
+                Mode = CipherMode.CBC,
+                Padding = PaddingMode.PKCS7
+            };
 
             ICryptoTransform cTransform = tdes.CreateEncryptor();
 
@@ -130,7 +132,7 @@ namespace M150_EncryptionProject.ViewModel
             }
             FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
 
-            File.WriteAllText(saveFileInfo.FullName, string.Join("", resultArray));
+            File.WriteAllText(saveFileInfo.FullName, Encoding.UTF8.GetString(resultArray));
         }
 
         private void Decrypt()
@@ -164,30 +166,33 @@ namespace M150_EncryptionProject.ViewModel
 
             //TODO Decryption magic
             byte[] keyArray;
-            byte[] toEncryptArray = Convert.FromBase64String(fileContent);
+            byte[] toEncryptArray;
+            try
+            {
+                toEncryptArray = Encoding.UTF8.GetBytes(fileContent);
+            }
+            catch
+            {
+                MessageBox.Show("Invalide character in filecontent","Invalid character",MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             byte[] resultArray;
 
             MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-            keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(Key));
+            keyArray = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(Key));
             hashmd5.Clear();
 
-            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
-            tdes.Key = keyArray;
-            tdes.Mode = CipherMode.ECB;
-            tdes.Padding = PaddingMode.PKCS7;
-
-
+            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider
+            {
+                Key = keyArray,
+                Mode = CipherMode.CBC,
+                Padding = PaddingMode.PKCS7
+            };
+            
             ICryptoTransform cTransform = tdes.CreateDecryptor();
             resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
 
             tdes.Clear();
-
-            UTF8Encoding.UTF8.GetString(resultArray);
-
-
-
-
-
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.FileName = FileInfo.Name;
@@ -200,7 +205,7 @@ namespace M150_EncryptionProject.ViewModel
             }
             FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
 
-            File.WriteAllText(saveFileInfo.FullName, string.Join("", resultArray));
+            File.WriteAllText(saveFileInfo.FullName, Encoding.UTF8.GetString(resultArray));
         }
 
         private string GenerateKey()
