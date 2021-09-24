@@ -8,7 +8,9 @@ using System.Windows.Input;
 using Prism.Commands;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace M150_EncryptionProject.ViewModel
 {
@@ -81,7 +83,7 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
             
-            string fileContent = FileInfo.OpenText().ReadToEnd();
+            string fileContent = File.ReadAllText(FilePath);
 
             if(fileContent == null)
             {
@@ -104,7 +106,7 @@ namespace M150_EncryptionProject.ViewModel
             byte[] toEncryptArray;
             try
             {
-                toEncryptArray = Encoding.UTF8.GetBytes(fileContent);
+                toEncryptArray = Encoding.Default.GetBytes(fileContent);
             }
             catch
             {
@@ -127,7 +129,6 @@ namespace M150_EncryptionProject.ViewModel
             ICryptoTransform cTransform = tdes.CreateEncryptor();
 
             resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
-
             tdes.Clear();
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -141,7 +142,7 @@ namespace M150_EncryptionProject.ViewModel
             }
             FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
 
-            File.WriteAllText(saveFileInfo.FullName, Encoding.UTF8.GetString(resultArray));
+            File.WriteAllBytes(saveFileInfo.FullName, resultArray);
         }
 
         private void Decrypt()
@@ -152,14 +153,23 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
 
-            string fileContent = FileInfo.OpenText().ReadToEnd();
+            byte[] fileContent;
+            try
+            {
+                fileContent = File.ReadAllBytes(FilePath);
+            }
+            catch
+            {
+                MessageBox.Show("Invalid character in filecontent", "Invalid character", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             if (fileContent == null)
             {
                 MessageBox.Show("Could not read contents of file \"" + FilePath + "\".", "Could not read contents of file.", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            if (fileContent == "")
+            if (fileContent.Length == 0)
             {
                 MessageBox.Show("File \"" + FilePath + "\" is empty.\nDecryption stopped.", "File is empty.", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
@@ -171,20 +181,7 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
 
-
-
-            //TODO Decryption magic
             byte[] keyArray;
-            byte[] toEncryptArray;
-            try
-            {
-                toEncryptArray = Encoding.UTF8.GetBytes(fileContent);
-            }
-            catch
-            {
-                MessageBox.Show("Invalide character in filecontent","Invalid character",MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
             byte[] resultArray;
 
             MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
@@ -199,7 +196,7 @@ namespace M150_EncryptionProject.ViewModel
             };
             
             ICryptoTransform cTransform = tdes.CreateDecryptor();
-            resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+            resultArray = cTransform.TransformFinalBlock(fileContent, 0, fileContent.Length);
 
             tdes.Clear();
 
@@ -214,7 +211,9 @@ namespace M150_EncryptionProject.ViewModel
             }
             FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
 
-            File.WriteAllText(saveFileInfo.FullName, Encoding.UTF8.GetString(resultArray));
+            string resultString = Encoding.Default.GetString(resultArray);
+
+            File.WriteAllText(saveFileInfo.FullName, resultString);
         }
 
         private string GenerateKey()
