@@ -101,9 +101,18 @@ namespace M150_EncryptionProject.ViewModel
             }
 
             byte[] keyArray;
-            byte[] toEncryptArray = Encoding.UTF8.GetBytes(fileContent);
+            byte[] toEncryptArray;
+            try
+            {
+                toEncryptArray = Encoding.UTF8.GetBytes(fileContent);
+            }
+            catch
+            {
+                MessageBox.Show("Invalide character in filecontent", "Invalid character", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             byte[] resultArray;
-            
+
             MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
             keyArray = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(Key));
             hashmd5.Clear();
