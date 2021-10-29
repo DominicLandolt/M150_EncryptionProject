@@ -171,8 +171,6 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
 
-
-
             //TODO Decryption magic
             byte[] keyArray;
             byte[] toEncryptArray;
@@ -219,8 +217,7 @@ namespace M150_EncryptionProject.ViewModel
 
         private string GenerateKey()
         {
-            //TODO Actually generate key
-            return "TEMPKEY";
+            return Guid.NewGuid().ToString();
         }
 
         #region PropertyChanged
