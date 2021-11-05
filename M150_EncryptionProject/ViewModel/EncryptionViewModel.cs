@@ -6,8 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Prism.Commands;
-using System.Security.Cryptography;
-using System.Text;
 using System.Linq;
 using System;
 using System.Collections.Generic;
@@ -16,7 +14,6 @@ namespace M150_EncryptionProject.ViewModel
 {
     public class EncryptionViewModel : INotifyPropertyChanged
     {
-        private EncryptionView _view;
         private FileInfo _fileInfo;
         private string _key = "";
 
@@ -24,9 +21,10 @@ namespace M150_EncryptionProject.ViewModel
         private DelegateCommand _encryptCommand;
         private DelegateCommand _decryptCommand;
 
+        private readonly List<char> _cypher = "QF.@É}-âD;È(n?^vBx>0áy7wl,ÓÜKXUI]ä9p¬§û£#':úëMSW1sà/|8çJöóÀk$zEN+jm\\6Ö=<O4°¨rÛ¢[T_¦%RoPa)ZùtL2\"Áé5fAhegY`i~ëq{u&3CcÚÂHbËÙG* !´ÄüèdV".ToCharArray().ToList();
+
         public EncryptionViewModel(EncryptionView view)
         {
-            _view = view;
         }
 
         public ICommand OpenFileDialogCommand => _openFileDialogCommand ??= new DelegateCommand(OpenFileDialog);
@@ -102,34 +100,35 @@ namespace M150_EncryptionProject.ViewModel
                 MessageBox.Show("Generated new key \"" + Key + "\" as no key was provided.", "Generated new key.", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
-            byte[] keyArray;
-            byte[] toEncryptArray;
-            try
+            int cypherMoveAmount = Key.GetHashCode();
+            if (cypherMoveAmount % _cypher.Count == 0)
             {
-                toEncryptArray = Encoding.Default.GetBytes(fileContent);
+                cypherMoveAmount++; //Make sure text is not moved by multiple of length of cypher
             }
-            catch
+
+            string resultString = "";
+
+            fileContent.ToCharArray().ToList().ForEach(c =>
             {
-                MessageBox.Show("Invalide character in filecontent", "Invalid character", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            byte[] resultArray;
-                
-            MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-            keyArray = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(Key));
-            hashmd5.Clear();
-
-            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider
-            {
-                Key = keyArray,
-                Mode = CipherMode.CBC,
-                Padding = PaddingMode.PKCS7
-            };
-
-            ICryptoTransform cTransform = tdes.CreateEncryptor();
-
-            resultArray = cTransform.TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
-            tdes.Clear();
+                int index = _cypher.FindIndex(c2 => c2 == c);
+                if(index == -1)
+                {
+                    resultString += c;
+                }
+                else
+                {
+                    index += cypherMoveAmount;
+                    while(index >= _cypher.Count)
+                    {
+                        index -= _cypher.Count;
+                    }
+                    while(index < 0)
+                    {
+                        index += _cypher.Count;
+                    }
+                    resultString += _cypher[index];
+                }
+            });
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.FileName = FileInfo.Name;
@@ -142,7 +141,7 @@ namespace M150_EncryptionProject.ViewModel
             }
             FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
 
-            File.WriteAllBytes(saveFileInfo.FullName, resultArray);
+            File.WriteAllText(saveFileInfo.FullName, resultString);
         }
 
         private void Decrypt()
@@ -153,10 +152,10 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
 
-            byte[] fileContent;
+            string fileContent;
             try
             {
-                fileContent = File.ReadAllBytes(FilePath);
+                fileContent = File.ReadAllText(FilePath);
             }
             catch
             {
@@ -181,24 +180,35 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
 
-            byte[] keyArray;
-            byte[] resultArray;
-
-            MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
-            keyArray = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(Key));
-            hashmd5.Clear();
-
-            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider
+            int cypherMoveAmount = Key.GetHashCode();
+            if (cypherMoveAmount % _cypher.Count == 0)
             {
-                Key = keyArray,
-                Mode = CipherMode.CBC,
-                Padding = PaddingMode.PKCS7
-            };
-            
-            ICryptoTransform cTransform = tdes.CreateDecryptor();
-            resultArray = cTransform.TransformFinalBlock(fileContent, 0, fileContent.Length);
+                cypherMoveAmount++; //Make sure text is not moved by multiple of length of cypher
+            }
+            cypherMoveAmount *= -1; //Inverse of encrypt cypherMoveAmount to reverse encryption
+            string resultString = "";
 
-            tdes.Clear();
+            fileContent.ToCharArray().ToList().ForEach(c =>
+            {
+                int index = _cypher.FindIndex(c2 => c2 == c);
+                if (index == -1)
+                {
+                    resultString += c;
+                }
+                else
+                {
+                    index += cypherMoveAmount;
+                    while (index >= _cypher.Count)
+                    {
+                        index -= _cypher.Count;
+                    }
+                    while (index < 0)
+                    {
+                        index += _cypher.Count;
+                    }
+                    resultString += _cypher[index];
+                }
+            });
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.FileName = FileInfo.Name;
@@ -210,8 +220,6 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
             FileInfo saveFileInfo = new FileInfo(saveFileDialog.FileName);
-
-            string resultString = Encoding.Default.GetString(resultArray);
 
             File.WriteAllText(saveFileInfo.FullName, resultString);
         }
