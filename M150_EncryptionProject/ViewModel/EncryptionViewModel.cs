@@ -9,6 +9,9 @@ using Prism.Commands;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using Effortless.Net.Encryption;
+using System.Text;
+using M150_EncryptionProject.Model;
 
 namespace M150_EncryptionProject.ViewModel
 {
@@ -75,6 +78,7 @@ namespace M150_EncryptionProject.ViewModel
 
         private void Encrypt()
         {
+            
             if (FilePath.Equals("") || !File.Exists(FilePath))
             {
                 MessageBox.Show("Could not read contents of file \"" + FilePath + "\".\nFile does not exist.", "Could not read contents of file.", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -106,8 +110,9 @@ namespace M150_EncryptionProject.ViewModel
                 cypherMoveAmount++; //Make sure text is not moved by multiple of length of cypher
             }
 
-            string resultString = "";
+            fileContent = CipherHelper.Encrypt(fileContent, Key);
 
+            string resultString = "";
             fileContent.ToCharArray().ToList().ForEach(c =>
             {
                 int index = _cypher.FindIndex(c2 => c2 == c);
@@ -209,6 +214,8 @@ namespace M150_EncryptionProject.ViewModel
                     resultString += _cypher[index];
                 }
             });
+
+            resultString = CipherHelper.Decrypt(resultString, Key);
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.FileName = FileInfo.Name;
