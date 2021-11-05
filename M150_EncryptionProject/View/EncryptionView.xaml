@@ -4,14 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:M150_EncryptionProject.View"
-             mc:Ignorable="d" Width="298" Height="355">
+             mc:Ignorable="d" Width="376" Height="355">
     <Grid Margin="0,0,0,-6">
-        <Label x:Name="Lbl_Path" Content="Filepath" HorizontalAlignment="Left" Margin="36,45,0,0" VerticalAlignment="Top" />
-        <TextBox x:Name="Txb_Path" Text="{Binding FilePath, Mode=OneWay}" HorizontalAlignment="Left" Margin="36,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False" />
-        <Button x:Name="Btn_path" Content="browse" Command="{Binding OpenFileDialogCommand}" HorizontalAlignment="Left" Margin="180,69,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.571,-3.185" />
-        <Label x:Name="Lbl_Key" Content="Key" HorizontalAlignment="Left" Margin="36,129,0,0" VerticalAlignment="Top" />
-        <TextBox x:Name="Txb_Key" Text="{Binding Key}" HorizontalAlignment="Left" Margin="36,155,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-        <Button x:Name="Btn_Encrypt" Content="encrypt" Command="{Binding EncryptCommand}" HorizontalAlignment="Left" Margin="180,265,0,0"  VerticalAlignment="Top" RenderTransformOrigin="0.945,0.72" />
-        <Button x:Name="Btn_Decrypt" Content="decrypt" Command="{Binding DecryptCommand}"  HorizontalAlignment="Left" Margin="36,265,0,0"  VerticalAlignment="Top" />
+        <Label x:Name="Lbl_Path" Content="Filepath" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1" />
+        <TextBox x:Name="Txb_Path" Text="{Binding FilePath, Mode=OneWay}" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" IsEnabled="False" Grid.Row="1" Grid.Column="2"/>
+        <Button x:Name="Btn_path" Content="browse" Command="{Binding OpenFileDialogCommand}" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Grid.Row="1" Grid.Column="3"/>
+        <Label x:Name="Lbl_Key" Content="Key" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2" Grid.Column="1"/>
+        <TextBox x:Name="Txb_Key" Text="{Binding Key}" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Row="2" Grid.Column="2"/>
+        <Button x:Name="Btn_Encrypt" Content="encrypt" Command="{Binding EncryptCommand}" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="3"/>
+        <Button x:Name="Btn_Decrypt" Content="decrypt" Command="{Binding DecryptCommand}" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="4"/>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
     </Grid>
 </Window>
