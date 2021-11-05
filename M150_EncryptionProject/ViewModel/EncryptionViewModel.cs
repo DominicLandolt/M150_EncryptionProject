@@ -105,6 +105,7 @@ namespace M150_EncryptionProject.ViewModel
             {
                 cypherMoveAmount++; //Make sure text is not moved by multiple of length of cypher
             }
+
             string resultString = "";
 
             fileContent.ToCharArray().ToList().ForEach(c =>
