@@ -114,7 +114,7 @@ namespace M150_EncryptionProject.ViewModel
                 return;
             }
             byte[] resultArray;
-
+                
             MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
             keyArray = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(Key));
             hashmd5.Clear();

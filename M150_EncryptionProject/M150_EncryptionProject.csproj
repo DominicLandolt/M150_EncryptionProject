@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="chilkat-x64" Version="9.5.0.88" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
   </ItemGroup>
 
